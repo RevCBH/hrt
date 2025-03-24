@@ -1,8 +1,8 @@
-module libdb.so/hrt/v2
+module github.com/RevCBH/hrt/v2
 
-go 1.18
+go 1.22
 
 require (
-	github.com/go-chi/chi/v5 v5.0.8
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/pkg/errors v0.9.1
 )

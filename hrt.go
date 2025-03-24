@@ -74,6 +74,10 @@ func Wrap[RequestT, ResponseT any](f func(ctx context.Context, req RequestT) (Re
 	return Handler[RequestT, ResponseT](f)
 }
 
+func WrapFunc[RequestT, ResponseT any](f func(ctx context.Context, req RequestT) (ResponseT, error)) http.HandlerFunc {
+	return Handler[RequestT, ResponseT](f).ServeHTTP
+}
+
 // ServeHTTP implements the http.Handler interface.
 func (h Handler[RequestT, ResponseT]) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var req RequestT

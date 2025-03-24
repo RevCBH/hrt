@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/RevCBH/hrt/v2"
+	"github.com/RevCBH/hrt/v2/internal/ht"
 	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
-	"libdb.so/hrt/v2"
-	"libdb.so/hrt/v2/internal/ht"
 )
 
 // User is a simple user type.

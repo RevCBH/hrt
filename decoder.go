@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/RevCBH/hrt/v2/internal/rfutil"
 	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
-	"libdb.so/hrt/v2/internal/rfutil"
 )
 
 // Decoder describes a decoder that decodes the request type.
@@ -119,6 +119,38 @@ func (d urlDecoder) Decode(r *http.Request, v any) error {
 		}
 
 		return nil // ignore
+	})
+}
+
+// HeaderDecoder decodes HTTP headers into a struct. The decoder
+// processes struct fields with the `header` tag and assigns corresponding
+// header values from the request.
+//
+// The following tags are supported:
+//
+//   - `header` - uses r.Header.Get to decode the value.
+//
+// If a struct field has no header tag, it is ignored by this decoder.
+// Field names in the tag are case-insensitive as per HTTP header standards.
+//
+// # Example
+//
+//	type RequestData struct {
+//	    UserAgent   string `header:"User-Agent"`
+//	    ContentType string `header:"Content-Type"`
+//	    CustomID    string `header:"X-Custom-ID"`
+//	}
+var HeaderDecoder Decoder = headerDecoder{}
+
+type headerDecoder struct{}
+
+func (d headerDecoder) Decode(r *http.Request, v any) error {
+	return rfutil.EachStructField(v, func(rft reflect.StructField, rfv reflect.Value) error {
+		if tagValue := rft.Tag.Get("header"); tagValue != "" {
+			val := r.Header.Get(tagValue)
+			return rfutil.SetPrimitiveFromString(rft.Type, rfv, val)
+		}
+		return nil // ignore fields without header tag
 	})
 }
 
